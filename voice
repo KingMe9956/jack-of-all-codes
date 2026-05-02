@@ -1,0 +1,348 @@
+#!/usr/bin/env python3
+"""
+JACK VOICE ACTIVATION MODULE
+Enables hands-free voice control for LocalDAO
+Wake word: "Jack"
+End transmission: "Over"
+Terminate: "Over and out"
+"""
+
+import speech_recognition as sr
+import pyttsx3
+import subprocess
+import json
+import requests
+from threading import Thread
+import time
+
+class JackVoiceController:
+    def __init__(self):
+        self.recognizer = sr.Recognizer()
+        self.microphone = sr.Microphone()
+        self.tts_engine = pyttsx3.init()
+        self.is_listening = True
+        self.conversation_active = False
+        self.wake_word = "jack"
+        self.end_word = "over"
+        self.terminate_word = "over and out"
+        
+        # Configure TTS voice
+        self.tts_engine.setProperty('rate', 150)  # Speed
+        self.tts_engine.setProperty('volume', 1.0)  # Volume
+        
+        print("🎤 JACK Voice Controller initialized")
+    
+    def speak(self, text):
+        """Text-to-speech output"""
+        print(f"🗣️ JACK: {text}")
+        self.tts_engine.say(text)
+        self.tts_engine.runAndWait()
+    
+    def listen(self):
+        """Listen for voice input"""
+        with self.microphone as source:
+            # Adjust for ambient noise
+            self.recognizer.adjust_for_ambient_noise(source, duration=0.5)
+            
+            try:
+                audio = self.recognizer.listen(source, timeout=5, phrase_time_limit=10)
+                # Use Google Speech Recognition (free tier)
+                text = self.recognizer.recognize_google(audio)
+                return text.lower()
+            except sr.WaitTimeoutError:
+                return None
+            except sr.UnknownValueError:
+                return None
+            except sr.RequestError as e:
+                print(f"❌ Speech recognition error: {e}")
+                return None
+    
+    def send_command_to_jack(self, command):
+        """Send voice command to main Jack agent"""
+        try:
+            # Call the Node.js Jack agent via stdin or API
+            result = subprocess.run(
+                ['node', '/home/jack-agent/jack-agent.js', '--command', command],
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+            return result.stdout
+        except subprocess.TimeoutExpired:
+            return "Command timed out"
+        except Exception as e:
+            return f"Error: {str(e)}"
+    
+    def process_command(self, transcript):
+        """Process voice commands"""
+        if not transcript:
+            return
+        
+        print(f"👂 Heard: {transcript}")
+        
+        # Wake word detection
+        if self.wake_word in transcript and not self.conversation_active:
+            self.conversation_active = True
+            self.speak("Jack here. What do you need?")
+            return
+        
+        # Terminate conversation
+        if self.terminate_word in transcript:
+            self.speak("Over and out. Standing by.")
+            self.conversation_active = False
+            return
+        
+        # End of transmission
+        if self.end_word in transcript and self.conversation_active:
+            self.speak("Over. Listening.")
+            return
+        
+        # Process active conversation commands
+        if self.conversation_active:
+            # Send to main Jack agent
+            response = self.send_command_to_jack(transcript)
+            # Jack will speak his own response
+            print(f"📡 Jack response: {response}")
+    
+    def run(self):
+        """Main listening loop"""
+        self.speak("Jack voice controller active. Say Jack to wake me up.")
+        
+        while self.is_listening:
+            try:
+                transcript = self.listen()
+                if transcript:
+                    self.process_command(transcript)
+                
+                # Small delay to prevent excessive CPU usage
+                time.sleep(0.1)
+                
+            except KeyboardInterrupt:
+                print("\n🛑 Shutting down voice controller...")
+                self.speak("Voice controller shutting down. Goodbye.")
+                break
+            except Exception as e:
+                print(f"❌ Error: {e}")
+                time.sleep(1)
+
+# ============================================
+# ALTERNATIVE: WEB-BASED VOICE CONTROL
+# For use with browser on Samsung Tablet
+# ============================================
+def create_voice_web_interface():
+    """Generate HTML page with Web Speech API for browser-based voice control"""
+    html_content = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JACK Voice Control</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 20px;
+        }
+        .container {
+            text-align: center;
+            max-width: 600px;
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        h1 { font-size: 3em; margin-bottom: 20px; }
+        .status {
+            font-size: 1.5em;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+        .transcript {
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            min-height: 100px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        button:hover { transform: scale(1.05); }
+        button.listening { background: #f44336; animation: pulse 1.5s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .response {
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid #4CAF50;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 JACK</h1>
+        <div class="status" id="status">Ready. Say "Jack" to activate.</div>
+        
+        <button id="micBtn" onclick="toggleListening()">🎤 Start Listening</button>
+        
+        <div class="transcript" id="transcript">
+            Waiting for input...
+        </div>
+        
+        <div class="response" id="response" style="display: none;">
+            <strong>JACK:</strong> <span id="responseText"></span>
+        </div>
+    </div>
+
+    <script>
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        const synth = window.speechSynthesis;
+        
+        let isListening = false;
+        let conversationActive = false;
+        
+        recognition.continuous = true;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+        
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+            synth.speak(utterance);
+            
+            document.getElementById('response').style.display = 'block';
+            document.getElementById('responseText').textContent = text;
+        }
+        
+        function toggleListening() {
+            const btn = document.getElementById('micBtn');
+            const status = document.getElementById('status');
+            
+            if (isListening) {
+                recognition.stop();
+                isListening = false;
+                btn.textContent = '🎤 Start Listening';
+                btn.classList.remove('listening');
+                status.textContent = 'Microphone off';
+            } else {
+                recognition.start();
+                isListening = true;
+                btn.textContent = '🛑 Stop Listening';
+                btn.classList.add('listening');
+                status.textContent = 'Listening... Say "Jack" to activate';
+            }
+        }
+        
+        recognition.onresult = async (event) => {
+            const last = event.results.length - 1;
+            const transcript = event.results[last][0].transcript.toLowerCase();
+            
+            document.getElementById('transcript').textContent = transcript;
+            
+            // Wake word
+            if (transcript.includes('jack') && !conversationActive) {
+                conversationActive = true;
+                speak('Jack here. What do you need?');
+                document.getElementById('status').textContent = 'ACTIVE - Listening for commands';
+                return;
+            }
+            
+            // Terminate
+            if (transcript.includes('over and out')) {
+                conversationActive = false;
+                speak('Over and out. Standing by.');
+                document.getElementById('status').textContent = 'Standby mode';
+                return;
+            }
+            
+            // Process commands
+            if (conversationActive) {
+                await processCommand(transcript);
+            }
+        };
+        
+        async function processCommand(command) {
+            try {
+                // Send command to Jack backend
+                const response = await fetch('/api/jack/command', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command })
+                });
+                
+                const data = await response.json();
+                speak(data.response);
+                
+                if (command.includes('over') && !command.includes('over and out')) {
+                    speak('Over. Listening.');
+                }
+            } catch (error) {
+                speak('Command processing error. Please try again.');
+            }
+        }
+        
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+            document.getElementById('status').textContent = `Error: ${event.error}`;
+        };
+        
+        // Auto-start listening on page load
+        setTimeout(() => {
+            toggleListening();
+        }, 1000);
+    </script>
+</body>
+</html>
+    """
+    
+              with open('jackofallcodes/voice/voice-control.html', 'w') as f:
+        f.write(html_content)
+    
+              print("✅ Voice control web interface created at: /hvoice-conof-all-codes/voice-control.html")
+              print("🌐 Open in browser: file:///hvoice-conof-all-codes/voice-control.html")
+
+# ============================================
+# MAIN EXECUTION
+# ============================================
+if __name__ == "__main__":
+    import sys
+    
+    if '--web' in sys.args:
+        # Create web-based voice interface
+        create_voice_web_interface()
+    else:
+        # Run native voice controller
+        try:
+            controller = JackVoiceController()
+            controller.run()
+        except KeyboardInterrupt:
+            print("\n👋 JACK Voice Controller stopped.")
+        except Exception as e:
+            print(f"❌ Fatal error: {e}")
+            sys.exit(1)
