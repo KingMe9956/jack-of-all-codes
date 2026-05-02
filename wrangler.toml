@@ -1,0 +1,105 @@
+# JACK v2.0 - Cloudflare Workers Configuration
+
+name = "jack-of-all-codes"
+main = "src/worker.js"
+compatibility_date = "2026-05-02"
+
+# Account ID (fill this in from your .env)
+account_id = "8195d8ad0cd5002c38d95b43b460a252" # Your Cloudflare Account ID
+
+# Worker settings
+workers_dev = false
+route = "" # Your domain route, e.g., "yourdomain.com/api/*"
+
+# Environment variables (non-sensitive)
+[vars]
+ENVIRONMENT = "production"
+DEVICE_NAME = "LocalDAO"
+WAKE_WORD = "jack"
+
+# Secrets (set with: wrangler secret put SECRET_NAME)
+# DO NOT put actual secret values here
+# Set secrets with commands like:
+# wrangler secret put CF_API_TOKEN
+# wrangler secret put GITHUB_TOKEN
+# wrangler secret put COINBASE_API_KEY
+# wrangler secret put TOTP_SECRET
+
+# D1 Database binding (for project tracking)
+[[d1_databases]]
+binding = "DB"
+database_name = "jack-projects-db"
+database_id = "" # Run: wrangler d1 create jack-projects-db
+
+# KV namespace binding (for caching and session storage)
+[[kv_namespaces]]
+binding = "JACK_KV"
+id = "" # Run: wrangler kv:namespace create "JACK_KV"
+
+# R2 bucket binding (for build artifacts and backups)
+[[r2_buckets]]
+binding = "ARTIFACTS"
+bucket_name = "jack-build-artifacts"
+
+# Durable Objects (for stateful operations)
+[[durable_objects.bindings]]
+name = "JACK_STATE"
+class_name = "JackState"
+script_name = "jack-of-all-codes"
+
+# Analytics Engine binding
+[[analytics_engine_datasets]]
+binding = "ANALYTICS"
+
+# Rate limiting
+[limits]
+cpu_ms = 50000 # 50 second CPU time limit
+
+# Build configuration
+[build]
+command = "npm install && npm run build"
+watch_dir = "src"
+
+# Production environment
+[env.production]
+name = "jack-of-all-codes.productions"
+route = "yourdomain.com/api/*"
+
+[env.production.vars]
+ENVIRONMENT = "production"
+LOG_LEVEL = "info"
+
+# Staging environment
+[env.staging]
+name = "jack-of-all-codes-staging"
+route = "staging.yourdomain.com/api/*"
+
+[env.staging.vars]
+ENVIRONMENT = "staging"
+LOG_LEVEL = "debug"
+
+# Development environment
+[env.development]
+name = "jack-ai-agent-dev"
+workers_dev = true
+
+[env.development.vars]
+ENVIRONMENT = "development"
+LOG_LEVEL = "debug"
+
+# Compatibility flags for modern features
+[compatibility_flags]
+nodejs_compat = true
+
+# Tail consumers for logging
+[[tail_consumers]]
+service = "jack-logger"
+
+# Observability
+[observability]
+enabled = true
+head_sampling_rate = 1.0
+
+# Placement (regional deployment)
+[placement]
+mode = "smart"
