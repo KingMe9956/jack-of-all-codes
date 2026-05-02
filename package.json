@@ -1,0 +1,91 @@
+{
+  "name": "jack-ai-agent",
+  "version": "2.0.0",
+  "description": "Jack of All Codes - Hardened AI Development Agent with Enterprise Security",
+  "main": "jack-v2-hardened.js",
+  "scripts": {
+    "start": "node jack-v2-hardened.js",
+    "dev": "NODE_ENV=development node jack-v2-hardened.js",
+    "docker:build": "docker build -t jack-ai-agent:latest .",
+    "docker:run": "docker run -d --name jack -v /var/run/docker.sock:/var/run/docker.sock -e CF_API_TOKEN=${CF_API_TOKEN} -e GITHUB_TOKEN=${GITHUB_TOKEN} jack-ai-agent:latest",
+    "deploy": "wrangler deploy",
+    "test": "jest --coverage",
+    "security:scan": "npm audit && snyk test",
+    "security:update": "npm audit fix && npm update",
+    "logs": "docker logs -f jack",
+    "stop": "docker stop jack && docker rm jack"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "automation",
+    "deployment",
+    "cloudflare",
+    "github",
+    "security",
+    "devops",
+    "agentic",
+    "sovereign",
+    "automated trading bot",
+    "bots",
+    "decentralized AI infrastructure",
+    "AI driven",
+    "predictive analytics",
+    "hyper",
+    "ai tools",
+    "AI utility",
+    "machine learning models",
+    "bittensor",
+    "GPU rendering",
+    "user-owned-ai",
+    "super-app",
+    "ai-powered",
+    "ai-code-writer",
+    "ai-bot",
+    "my own agent",
+    "super alignment",
+    "humans-first",
+    "blockchain",
+    "encryption",
+    "private key",
+    "post-ai",
+    
+    
+  
+    
+  ],
+  "author": "KYIAM UNIVERSE",
+  "license": 
+  "engines": 
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    "@octokit/rest": "^20.0.2",
+    "axios": "^1.6.0",
+    "dockerode": "^4.0.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "validator": "^13.11.0",
+    "winston": "^3.11.0",
+    "speakeasy": "^2.0.0",
+    "tar-fs": "^3.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "eslint": "^8.55.0",
+    "jest": "^29.7.0",
+    "snyk": "^1.1269.0",
+    "wrangler": "^3.19.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kingme9956/jack-of-all-codes.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kingme9956/jack-of-all-codes/issues"
+  },
+  "homepage": "https://github.com/kingme9956/jack-of-all-codes#readme"
+}
