@@ -1,0 +1,234 @@
+┌─────────────────────────────────────┐
+│  Multi-Factor Authentication        │
+│  - TOTP (Time-based One-Time Pass)  │
+│  - Hardware key support (WebAuthn)  │
+│  - Biometric fallback               │
+├─────────────────────────────────────┤
+│  IP Allowlist (158.51.117.86)       │
+│  - Rate limiting per IP             │
+│  - Geo-fencing                      │
+│  - DDoS protection                  │
+├─────────────────────────────────────┤
+│  Role-Based Access Control (RBAC)   │
+│  - Deployment permissions           │
+│  - Read-only monitoring             │
+│  - Admin functions                  │
+└─────────────────────────────────────┘
+┌─────────────────────────────────────┐
+│  Voice Command Parser                │
+│  - Whitelist allowed commands       │
+│  - Regex validation                 │
+│  - Length limits                    │
+│  - Special character escaping       │
+├─────────────────────────────────────┤
+│  Parameter Validation                │
+│  - Type checking                    │
+│  - Range validation                 │
+│  - Path traversal prevention        │
+└─────────────────────────────────────┘
+┌─────────────────────────────────────┐
+│  Cloudflare Workers Secrets          │
+│  - Encrypted at rest (AES-256)      │
+│  - Encrypted in transit (TLS 1.3)   │
+│  - Automatic rotation               │
+│  - Access logging                   │
+├─────────────────────────────────────┤
+│  GitHub Personal Access Tokens       │
+│  - Fine-grained permissions         │
+│  - Expiration policy (90 days)      │
+│  - Scope limitation                 │
+├─────────────────────────────────────┤
+│  Coinbase API Keys                   │
+│  - Webhook signature verification   │
+│  - IP whitelist enforcement         │
+│  - Transaction limits               │
+└─────────────────────────────────────┘
+┌─────────────────────────────────────┐
+│  Docker Containerization             │
+│  - Isolated filesystem              │
+│  - Resource limits (CPU/RAM)        │
+│  - Read-only root filesystem        │
+│  - No privileged mode               │
+├─────────────────────────────────────┤
+│  Network Isolation                   │
+│  - Private network namespace        │
+│  - Egress filtering                 │
+│  - No direct internet access        │
+│  - Proxy for external calls         │
+├─────────────────────────────────────┤
+│  User Namespaces                     │
+│  - Non-root execution               │
+│  - UID/GID mapping                  │
+│  - Capability dropping              │
+└─────────────────────────────────────┘
+┌─────────────────────────────────────┐
+│  Pre-Clone Scanning                  │
+│  - Malware detection                │
+│  - Secret scanning (API keys, etc)  │
+│  - License compliance               │
+├─────────────────────────────────────┤
+│  Dependency Analysis                 │
+│  - Known vulnerability check (CVE)  │
+│  - SBOM generation                  │
+│  - Package hash verification        │
+│  - Typosquatting detection          │
+├─────────────────────────────────────┤
+│  Code Analysis                       │
+│  - Static analysis (SAST)           │
+│  - Dangerous function detection     │
+│  - Obfuscated code flagging         │
+└─────────────────────────────────────┘
+┌─────────────────────────────────────┐
+│  Process Monitoring                  │
+│  - Unexpected process detection     │
+│  - Resource usage anomalies         │
+│  - Network connection monitoring    │
+├─────────────────────────────────────┤
+│  File Integrity Monitoring           │
+│  - Unauthorized file changes        │
+│  - Checksum verification            │
+│  - Immutable system files           │
+├─────────────────────────────────────┤
+│  Behavioral Analysis                 │
+│  - ML-based anomaly detection       │
+│  - Baseline deviation alerting      │
+│  - Automated threat response        │
+└─────────────────────────────────────┘
+┌─────────────────────────────────────┐
+│  Immutable Logging                   │
+│  - All actions logged               │
+│  - Tamper-proof storage             │
+│  - Centralized log aggregation      │
+├─────────────────────────────────────┤
+│  Audit Trail                         │
+│  - Who, what, when, where, why      │
+│  - Command history                  │
+│  - Deployment records               │
+│  - Access attempts                  │
+├─────────────────────────────────────┤
+│  Compliance Reporting                │
+│  - Security posture dashboards      │
+│  - Vulnerability reports            │
+│  - Incident timelines               │
+└─────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│                     USER INITIATES COMMAND                    │
+│                    (Voice: "Jack, deploy X")                  │
+└────────────────────────┬─────────────────────────────────────┘
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────────┐
+│              AUTHENTICATION & AUTHORIZATION                   │
+│  ✓ MFA verification                                          │
+│  ✓ IP whitelist check                                        │
+│  ✓ Permission validation                                     │
+│  ✓ Rate limit check                                          │
+└────────────────────────┬─────────────────────────────────────┘
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────────┐
+│                  INPUT VALIDATION & PARSING                   │
+│  ✓ Command whitelist verification                            │
+│  ✓ Parameter sanitization                                    │
+│  ✓ Injection attack prevention                               │
+│  ✓ Audit log entry created                                   │
+└────────────────────────┬─────────────────────────────────────┘
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────────┐
+│                   REPOSITORY RETRIEVAL                        │
+│  ✓ GitHub API authentication (fine-grained token)            │
+│  ✓ Repository metadata collection                            │
+│  ✓ Shallow clone to temporary location                       │
+└────────────────────────┬─────────────────────────────────────┘
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────────┐
+│                     SECURITY SCANNING                         │
+│  ✓ Malware scan (ClamAV)                                     │
+│  ✓ Secret detection (TruffleHog)                             │
+│  ✓ Dependency vulnerability scan (npm audit, Snyk)           │
+│  ✓ SAST analysis (Semgrep)                                   │
+│  ✓ License compliance check                                  │
+│                                                               │
+│  ❌ FAIL → Quarantine + Alert + Audit                        │
+│  ✓ PASS → Continue                                           │
+└────────────────────────┬─────────────────────────────────────┘
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────────┐
+│                    SANDBOXED BUILD                            │
+│  ✓ Docker container creation                                 │
+│  ✓ Read-only filesystem mount                                │
+│  ✓ Network isolation applied                                 │
+│  ✓ Resource limits enforced                                  │
+│  ✓ Build command execution                                   │
+│  ✓ Output artifact collection                                │
+│                                                               │
+│  ❌ Build failure → Log + Cleanup + Notify                   │
+│  ✓ Build success → Continue                                  │
+└────────────────────────┬─────────────────────────────────────┘
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────────┐
+│                 ARTIFACT SECURITY SCAN                        │
+│  ✓ Built artifact malware scan                               │
+│  ✓ File integrity verification                               │
+│  ✓ Size and content validation                               │
+└────────────────────────┬─────────────────────────────────────┘
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────────┐
+│              CLOUDFLARE DEPLOYMENT                            │
+│  ✓ Wrangler authentication (Workers Secret)                  │
+│  ✓ Deployment with security headers                          │
+│  ✓ CSP, HSTS, X-Frame-Options configured                     │
+│  ✓ Rate limiting enabled                                     │
+│  ✓ DDoS protection active                                    │
+└────────────────────────┬─────────────────────────────────────┘
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────────┐
+│               POST-DEPLOYMENT VERIFICATION                    │
+│  ✓ Health check endpoint test                                │
+│  ✓ Security header verification                              │
+│  ✓ SSL/TLS configuration check                               │
+│  ✓ Deployment record in audit log                            │
+└────────────────────────┬─────────────────────────────────────┘
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────────┐
+│                      CLEANUP & NOTIFY                         │
+│  ✓ Temporary files deleted                                   │
+│  ✓ Container destroyed                                       │
+│  ✓ Secrets cleared from memory                               │
+│  ✓ Success notification sent                                 │
+│  ✓ Deployment URL provided                                   │
+└──────────────────────────────────────────────────────────────┘
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
