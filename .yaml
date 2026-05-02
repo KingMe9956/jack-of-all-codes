@@ -1,0 +1,18 @@
+threats:
+  - name: "Malware detected in repository"
+    action: "Quarantine + Alert + Block GitHub user"
+    
+  - name: "Suspicious command pattern"
+    action: "Require manual approval + Log + Alert"
+    
+  - name: "Unusual deployment frequency"
+    action: "Rate limit + Security review required"
+    
+  - name: "Failed authentication attempts"
+    action: "IP block after 3 attempts + Alert"
+    
+  - name: "Secrets exposed in logs"
+    action: "Rotate secrets + Alert + Audit"
+    
+  - name: "Unexpected network connection"
+    action: "Kill process + Block IP + Alert"
