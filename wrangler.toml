@@ -103,3 +103,6 @@ head_sampling_rate = 1.0
 # Placement (regional deployment)
 [placement]
 mode = "smart"
+
+# wrangler.toml 
+pages_build_output_dir = "." 
