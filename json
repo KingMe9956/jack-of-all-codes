@@ -1,0 +1,10 @@
+{
+  "name": "jack-of-all-codes",
+  "version": "2.0.0",
+  "main": "jack.js",
+  "dependencies": {
+    "@octokit/rest": "^20.0.2",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1"
+  }
+}
