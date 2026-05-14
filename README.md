@@ -1,2 +1,4 @@
 # jack-of-all-codes
-Local voice activated coding gen-agent.
+Local sovereign voice activated coding gen-agent.
+
+When we all share, we all win.
